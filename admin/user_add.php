@@ -8,33 +8,47 @@
   }
 
   if($_POST) {
-    if(empty($_POST['name']) || empty($_POST['description'])) {
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password'])) {
       if(empty($_POST['name'])) {
         $nameError = 'Name is required';
       }
-      if(empty($_POST['description'])) {
-        $descError = 'Description is required';
+      if(empty($_POST['email'])) {
+        $emailError = 'Email is required';
+      }
+      if(empty($_POST['password'])) {
+        $passwordError = 'Password is required';
       }
     }else {
-      $id = $_POST['id'];
       $name = $_POST['name'];
-      $description = $_POST['description'];
-      $stmt = $pdo->prepare("UPDATE categories SET name=:name, description=:description WHERE id=:id");
-      $result = $stmt-> execute(
-        array(':id'=>$id, ':name'=>$name, ':description'=>$description)
-      );
+      $email = $_POST['email'];
+      $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
+      if(empty($_POST['role'])) {
+        $role = 0;
+      }else {
+          $role = 1;
+      }
 
-      if($result) {
-        echo "<script>alert('Category is updated!');window.location.href='category.php';</script>";
+      $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:email");
+      $stmt->bindValue(':email',$email);
+      $stmt->execute();
+      $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      if($user) {
+          echo "<script>alert('This email already exists')</script>";
+      }else {
+        $stmt = $pdo->prepare("INSERT INTO users (name,email,password,role) VALUES (:name,:email,:password,:role)");
+        $result = $stmt-> execute(
+          array(':name'=>$name, ':email'=>$email, ':password'=>$password, ':role'=>$role)
+        );
+  
+        if($result) {
+          echo "<script>alert('User is added!');window.location.href='user.php';</script>";
+        }
       }
     }
       // print "<pre>";
       // print_r($result);
   }
-
-  $stmt = $pdo -> prepare("SELECT * FROM categories WHERE id=".$_GET['id']);
-  $stmt -> execute();
-  $result = $stmt->fetchAll();
 
 ?>
 
@@ -47,7 +61,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Update Category</title>
+  <title>Add User</title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -80,7 +94,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
         </div>
         <div class="info">
-          <a href="#" class="d-block">Category</a>
+          <a href="#" class="d-block">User</a>
         </div>
       </div>
 
@@ -88,10 +102,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
           <li class="nav-item">
-            <a href="category.php" class="nav-link">
+            <a href="user.php" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
-                Category
+                User
               </p>
             </a>
           </li>
@@ -110,7 +124,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <div class="row mb-2">
           <div class="col-sm-12">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="category.php">Home</a></li>
+              <li class="breadcrumb-item"><a href="user.php">Home</a></li>
               <li class="breadcrumb-item active"><a href="logout.php">Logout</a></li>
             </ol>
           </div>
@@ -120,21 +134,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
     <!-- Main content -->
     <div class="container-fluid pl-3 pr-3">
-        <form action="cat_edit.php" method="POST">
+        <form action="user_add.php" method="POST">
         <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
-        <input type="hidden" name="id" value="<?php echo escape($result[0]['id']) ?>">
         <div class="form-group mb-4">
             <label for="name" class="form-label" style="color: #666">Name</label>
             <p style="color: red"><?php echo empty($nameError) ? '' : '*'.$nameError; ?></p>
-            <input type="text" name="name" class="form-control" value="<?php echo escape($result[0]['name']) ?>">
+            <input type="text" name="name" class="form-control">
         </div>
         <div class="form-group mb-4">
-            <label for="description" class="form-label" style="color: #666">Description</label>
-            <p style="color: red"><?php echo empty($descError) ? '' : '*'.$descError; ?></p>
-            <textarea name="description" cols="30" rows="10" class="form-control"><?php echo escape($result[0]['description']) ?></textarea>
+            <label for="email" class="form-label" style="color: #666">Email</label>
+            <p style="color: red"><?php echo empty($emailError) ? '' : '*'.$emailError; ?></p>
+            <input type="email" name="email" class="form-control">
+        </div>
+        <div class="form-group mb-4">
+            <label for="password" class="form-label" style="color: #666">Password</label>
+            <p style="color: red"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
+            <input type="password" name="password" class="form-control">
+        </div>
+        <div class="form-group mb-4">
+            <label for="role" class="form-label" style="color: #666">Admin</label><br>
+            <input type="checkbox" name="role" value="1" style="width: 20px;height: 30px;">
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-success mr-1">Update</button>
+            <button type="submit" class="btn btn-success mr-1">Add</button>
         </div>
         </form>
     </div>

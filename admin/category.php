@@ -69,6 +69,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
       </li>
     </ul>
 
+    <?php
+        $link = $_SERVER['PHP_SELF'];
+        $link_array = explode('/', $link);
+        $page = end($link_array);
+    ?>
+
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <!-- Navbar Search -->
@@ -77,7 +83,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <i class="fas fa-search"></i>
         </a>
         <div class="navbar-search-block">
-          <form class="form-inline" method="POST" action="index.php">
+          <form class="form-inline" method="POST" action="<?php echo $page == 'category.php' ? 'category.php':'user.php'; ?>">
           <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
             <div class="input-group input-group-sm">
               <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
@@ -156,7 +162,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           </div>
           <div class="col-sm-8">
             <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+              <li class="breadcrumb-item"><a href="category.php">Home</a></li>
               <li class="breadcrumb-item active"><a href="logout.php">Logout</a></li>
             </ol>
           </div>
@@ -181,7 +187,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </tr>
                   </thead>
                   <tbody>
-                      <?php
+                    <?php
                       $i = 1;
                       foreach ($result as $value) {
                     ?>
@@ -207,7 +213,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
               <div class="card-footer clearfix">
                 <ul class="pagination pagination-sm m-0 float-right">
-                <li class="page-item">
+                  <li class="page-item">
                     <a class="page-link" href="?pageno=1">First</a>
                   </li>
                   <li class="page-item <?php if($pageno<=1){echo 'disabled';} ?>">
