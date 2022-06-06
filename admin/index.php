@@ -41,6 +41,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
       </li>
     </ul>
 
+    <?php
+        $link = $_SERVER['PHP_SELF'];
+        $link_array = explode('/', $link);
+        $page = end($link_array);
+    ?>
+    
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <!-- Navbar Search -->
@@ -124,7 +130,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-4">
-            <a href="add.php" class="btn btn-success">Add New Item</a>
+            <a href="add.php" class="btn btn-success">New Item</a>
           </div>
           <div class="col-sm-8">
             <ol class="breadcrumb float-sm-right">

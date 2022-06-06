@@ -83,7 +83,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           <i class="fas fa-search"></i>
         </a>
         <div class="navbar-search-block">
-          <form class="form-inline" method="POST" action="<?php echo $page == 'category.php' ? 'category.php':'user.php'; ?>">
+          <form class="form-inline" method="POST" action="user.php">
           <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
             <div class="input-group input-group-sm">
               <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">

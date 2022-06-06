@@ -55,8 +55,8 @@
       // print "<pre>";
       // print_r($result);
   }
-    $stmt = $pdo -> prepare("SELECT * FROM users WHERE id=".$_GET['id']);
-    $stmt -> execute();
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id=".$_GET['id']);
+    $stmt->execute();
     $result = $stmt->fetchAll();
 ?>
 
@@ -156,6 +156,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <input type="email" name="email" class="form-control" value="<?php echo escape($result[0]['email']) ?>">
         </div>
         <div class="form-group mb-4">
+            <span style="font-size: 12px;color: #666"><p>*This user already has a password.</p></span>
             <label for="password" class="form-label" style="color: #666">Password</label>
             <input type="password" name="password" class="form-control">
         </div>
