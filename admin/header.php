@@ -42,33 +42,41 @@ scratch. This page gets rid of all links and provides the needed markup only.
         if($page == 'category.php') {
             $pageName = 'Category';
         }
+        if($page == 'order.php') {
+          $pageName = 'Order';
+        }
+        if($page == 'order_detail.php') {
+          $pageName = 'Order Detail';
+        }
     ?>
 
     <!-- Right navbar links -->
-    <ul class="navbar-nav ml-auto">
-      <!-- Navbar Search -->
-      <li class="nav-item">
-        <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-          <i class="fas fa-search"></i>
-        </a>
-        <div class="navbar-search-block">
-          <form class="form-inline" method="POST" action="<?php echo $page ?>">
-          <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
-            <div class="input-group input-group-sm">
-              <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
-              <div class="input-group-append">
-                <button class="btn btn-navbar" type="submit">
-                  <i class="fas fa-search"></i>
-                </button>
-                <button class="btn btn-navbar" type="button" data-widget="navbar-search">
-                  <i class="fas fa-times"></i>
-                </button>
+    <?php if($page != 'order.php' && $page != 'order_detail.php') {?>
+      <ul class="navbar-nav ml-auto">
+        <!-- Navbar Search -->
+        <li class="nav-item">
+          <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+            <i class="fas fa-search"></i>
+          </a>
+          <div class="navbar-search-block">
+            <form class="form-inline" method="POST" action="<?php echo $page ?>">
+            <input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
+              <div class="input-group input-group-sm">
+                <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
+                <div class="input-group-append">
+                  <button class="btn btn-navbar" type="submit">
+                    <i class="fas fa-search"></i>
+                  </button>
+                  <button class="btn btn-navbar" type="button" data-widget="navbar-search">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
               </div>
-            </div>
-          </form>
-        </div>
-      </li>
-    </ul>
+            </form>
+          </div>
+        </li>
+      </ul>
+    <?php } ?>
   </nav>
   <!-- /.navbar -->
 
@@ -78,10 +86,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <div class="sidebar">
       <!-- Sidebar user panel (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-        <div class="image">
-          <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-        </div>
-        <div class="info">
+        <div class="info" style="padding-left: 15px">
           <a href="#" class="d-block">JJ Shopping | <?php echo $pageName ?></a>
         </div>
       </div>
@@ -110,6 +115,14 @@ scratch. This page gets rid of all links and provides the needed markup only.
               <i class="nav-icon fas fa-user"></i>
               <p>
                 User
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="order.php" class="nav-link">
+              <i class="nav-icon fas fa-table"></i>
+              <p>
+                Order
               </p>
             </a>
           </li>
