@@ -59,7 +59,8 @@
 		</div>
 		<div class="search_input" id="search_input_box">
 			<div class="container">
-				<form class="d-flex justify-content-between">
+				<form class="d-flex justify-content-between" action="index.php" method="POST">
+					<input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
 					<input type="text" name="search" class="form-control" id="search_input" placeholder="Search Here">
 					<button type="submit" class="btn"></button>
 					<span class="lnr lnr-cross" id="close_search" title="Close Search"></span>
@@ -75,7 +76,6 @@
 			<div class="breadcrumb-banner d-flex flex-wrap align-items-center justify-content-end">
 				<div class="col-first">
 					<h1>Welcome</h1>
-
 				</div>
 			</div>
 		</div>
