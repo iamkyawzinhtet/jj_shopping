@@ -6,9 +6,12 @@
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
     header('Location: login.php');
   }
+  if($_SESSION['role'] != 1) {
+    header('Location: login.php');
+  }
 
   if($_POST) {
-    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password'])) {
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['password']) || empty($_POST['address']) || empty($_POST['phone'])) {
       if(empty($_POST['name'])) {
         $nameError = 'Name is required';
       }
@@ -18,10 +21,18 @@
       if(empty($_POST['password'])) {
         $passwordError = 'Password is required';
       }
+      if(empty($_POST['address'])) {
+        $addressError = 'Address is required';
+      }
+      if(empty($_POST['phone'])) {
+        $phoneError = 'Phone is required';
+      }
     }else {
       $name = $_POST['name'];
       $email = $_POST['email'];
       $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
+      $address = $_POST['address'];
+      $phone = $_POST['phone'];
       if(empty($_POST['role'])) {
         $role = 0;
       }else {
@@ -36,9 +47,9 @@
       if($user) {
           echo "<script>alert('This email already exists')</script>";
       }else {
-        $stmt = $pdo->prepare("INSERT INTO users (name,email,password,role) VALUES (:name,:email,:password,:role)");
+        $stmt = $pdo->prepare("INSERT INTO users (name,email,password,address,phone,role) VALUES (:name,:email,:password,:address,:phone,:role)");
         $result = $stmt-> execute(
-          array(':name'=>$name, ':email'=>$email, ':password'=>$password, ':role'=>$role)
+          array(':name'=>$name, ':email'=>$email, ':password'=>$password, ':address'=>$address, ':phone'=>$phone, ':role'=>$role)
         );
   
         if($result) {
@@ -150,6 +161,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <label for="password" class="form-label" style="color: #666">Password</label>
             <p style="color: red"><?php echo empty($passwordError) ? '' : '*'.$passwordError; ?></p>
             <input type="password" name="password" class="form-control">
+        </div>
+        <div class="form-group mb-4">
+            <label for="address" class="form-label" style="color: #666">Address</label>
+            <p style="color: red"><?php echo empty($addressError) ? '' : '*'.$addressError; ?></p>
+            <input type="text" name="address" class="form-control">
+        </div>
+        <div class="form-group mb-4">
+            <label for="phone" class="form-label" style="color: #666">Phone</label>
+            <p style="color: red"><?php echo empty($phoneError) ? '' : '*'.$phoneError; ?></p>
+            <input type="text" name="phone" class="form-control">
         </div>
         <div class="form-group mb-4">
             <label for="role" class="form-label" style="color: #666">Admin</label><br>

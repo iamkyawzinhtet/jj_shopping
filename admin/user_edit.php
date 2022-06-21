@@ -6,20 +6,31 @@
   if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
     header('Location: login.php');
   }
+  if($_SESSION['role'] != 1) {
+    header('Location: login.php');
+  }
 
   if($_POST) {
-    if(empty($_POST['name']) || empty($_POST['email'])) {
+    if(empty($_POST['name']) || empty($_POST['email']) || empty($_POST['address']) || empty($_POST['phone'])) {
       if(empty($_POST['name'])) {
         $nameError = 'Name is required';
       }
       if(empty($_POST['email'])) {
         $emailError = 'Email is required';
       }
+      if(empty($_POST['address'])) {
+        $addressError = 'Address is required';
+      }
+      if(empty($_POST['phone'])) {
+        $phoneError = 'Phone is required';
+      }
     }else {
       $id = $_POST['id'];
       $name = $_POST['name'];
       $email = $_POST['email'];
       $password = $_POST['password'];
+      $address = $_POST['address'];
+      $phone = $_POST['phone'];
       if(empty($_POST['role'])) {
           $role = 0;
       }else {
@@ -36,13 +47,15 @@
       if($user) {
           echo "<script>alert('This email already exists')</script>";
       }else {
-          $stmt = $pdo->prepare("UPDATE users SET name=:name, email=:email, password=:password, role=:role WHERE id=:id");
+          $stmt = $pdo->prepare("UPDATE users SET name=:name, email=:email, password=:password, address=:address, phone=:phone, role=:role WHERE id=:id");
           $result = $stmt-> execute(
             array(
                 ':id'=>$id,
                 ':name'=>$name,
                 ':email'=>$email,
                 ':password'=>$password,
+                ':address'=>$address,
+                ':phone'=>$phone,
                 ':role'=>$role        
                 )
           );
@@ -156,9 +169,19 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <input type="email" name="email" class="form-control" value="<?php echo escape($result[0]['email']) ?>">
         </div>
         <div class="form-group mb-4">
-            <span style="font-size: 12px;color: #666"><p>*This user already has a password.</p></span>
+            <span style="font-size: 12px;color: red"><p>*This user already has a password.</p></span>
             <label for="password" class="form-label" style="color: #666">Password</label>
             <input type="password" name="password" class="form-control">
+        </div>
+        <div class="form-group mb-4">
+            <label for="address" class="form-label" style="color: #666">Address</label>
+            <p style="color: red"><?php echo empty($addressError) ? '' : '*'.$addressError; ?></p>
+            <input type="text" name="address" class="form-control" value="<?php echo escape($result[0]['address']) ?>">
+        </div>
+        <div class="form-group mb-4">
+            <label for="phone" class="form-label" style="color: #666">Phone</label>
+            <p style="color: red"><?php echo empty($phoneError) ? '' : '*'.$phoneError; ?></p>
+            <input type="text" name="phone" class="form-control" value="<?php echo escape($result[0]['phone']) ?>">
         </div>
         <div class="form-group mb-4">
             <label for="role" class="form-label" style="color: #666">Admin</label><br>

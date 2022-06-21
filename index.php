@@ -7,6 +7,15 @@
     header('Location: login.php');
   }
 
+  if(!empty($_POST['search'])) {
+    setcookie('search',$_POST['search'], time() + (86400 * 30), "/");
+  }else {
+    if(empty($_GET['pageno'])) {
+      unset($_COOKIE['search']);
+      setcookie('search', null, -1, '/');
+    }
+  }
+
   if(!empty($_GET['pageno'])) {
     $pageno = $_GET['pageno'];
   }else {
@@ -15,7 +24,7 @@
   $numOfRecs = 3;
   $offset = ($pageno - 1) * $numOfRecs;
 
-  if(empty($_POST['search'])) {
+  if(empty($_POST['search']) && empty($_COOKIE['search'])) {
     $stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC");
     $stmt->execute();
     $products = $stmt->fetchAll();
@@ -25,7 +34,7 @@
     $stmt->execute();
     $result = $stmt->fetchAll();
   }else {
-    $searchKey = $_POST['search'];
+    $searchKey = !empty($_POST['search']) ? $_POST['search'] : $_COOKIE['search'] ;
     $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
     $stmt->execute();
     $products = $stmt->fetchAll();
@@ -59,7 +68,7 @@
 						foreach ($categories as $value) {
 					?>
 						<li class="main-nav-list">
-						<a href="#"><?php echo escape($value['name'])?></a>
+						<a href="index.php?id=<?php echo($value['id'])?>"><?php echo escape($value['name'])?></a>
 					</li>
 					<?php
 						}
@@ -89,19 +98,21 @@
 						<!-- single product -->
 						<div class="col-lg-4 col-md-6">
 							<div class="single-product">
-								<img class="img-fluid" src="admin/images/<?php echo escape($value['image']) ?>" alt="" style="height: 280px">
+								<a href="product_detail.php?id=<?php echo($value['id'])?>">
+									<img class="img-fluid" src="admin/images/<?php echo escape($value['image']) ?>" alt="" style="height: 280px">
+								</a>
 								<div class="product-details">
-									<h6><?php echo escape($value['description']) ?></h6>
+									<h6><?php echo escape($value['name']) ?></h6>
 									<div class="price">
 										<h6><?php echo escape($value['price']) ?></h6>
 									</div>
 									<div class="prd-bottom">
 
-										<a href="" class="social-info">
+										<a href="index.php?id=<?php echo($value['id'])?>" class="social-info">
 											<span class="ti-bag"></span>
 											<p class="hover-text">add to bag</p>
 										</a>
-										<a href="" class="social-info">
+										<a href="product_detail.php?id=<?php echo($value['id'])?>" class="social-info">
 											<span class="lnr lnr-move"></span>
 											<p class="hover-text">view more</p>
 										</a>
