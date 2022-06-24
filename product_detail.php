@@ -22,7 +22,7 @@
 
 <?php include('header.php') ?>
 <!--================Single Product Area =================-->
-<div class="product_image_area">
+<div class="product_image_area" style="padding-top: 0">
   <div class="container">
     <?php if($products) { 
         foreach ($products as $value) {
