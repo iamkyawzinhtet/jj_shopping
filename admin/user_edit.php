@@ -28,7 +28,7 @@
       $id = $_POST['id'];
       $name = $_POST['name'];
       $email = $_POST['email'];
-      $password = $_POST['password'];
+      $password = password_hash($_POST['password'],PASSWORD_DEFAULT);
       $address = $_POST['address'];
       $phone = $_POST['phone'];
       if(empty($_POST['role'])) {
@@ -46,6 +46,22 @@
 
       if($user) {
           echo "<script>alert('This email already exists')</script>";
+      }elseif(empty($_POST['password'])) {
+        $stmt = $pdo->prepare("UPDATE users SET name=:name, email=:email, address=:address, phone=:phone, role=:role WHERE id=:id");
+        $result = $stmt-> execute(
+          array(
+              ':id'=>$id,
+              ':name'=>$name,
+              ':email'=>$email,
+              ':address'=>$address,
+              ':phone'=>$phone,
+              ':role'=>$role        
+              )
+        );
+
+        if($result) {
+          echo "<script>alert('User is updated!');window.location.href='user.php';</script>";
+        }
       }else {
           $stmt = $pdo->prepare("UPDATE users SET name=:name, email=:email, password=:password, address=:address, phone=:phone, role=:role WHERE id=:id");
           $result = $stmt-> execute(
@@ -67,6 +83,7 @@
     }
       // print "<pre>";
       // print_r($result);
+      // exit();
   }
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id=".$_GET['id']);
     $stmt->execute();
@@ -171,7 +188,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <div class="form-group mb-4">
             <span style="font-size: 12px;color: red"><p>*This user already has a password.</p></span>
             <label for="password" class="form-label" style="color: #666">Password</label>
-            <input type="password" name="password" class="form-control">
+            <input type="password" name="password" class="form-control"?>
         </div>
         <div class="form-group mb-4">
             <label for="address" class="form-label" style="color: #666">Address</label>
