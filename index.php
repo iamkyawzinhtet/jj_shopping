@@ -27,32 +27,32 @@
   if(empty($_POST['search']) && empty($_COOKIE['search'])) {
 	if(!empty($_GET['category_id'])) {
 		$categoryId = $_GET['category_id'];
-		$stmt = $pdo->prepare("SELECT * FROM products WHERE category_id=$categoryId ORDER BY id DESC");
+		$stmt = $pdo->prepare("SELECT * FROM products WHERE category_id=$categoryId AND quantity > 0 ORDER BY id DESC");
 		$stmt->execute();
 		$products = $stmt->fetchAll();
 		$total_pages = ceil(count($products) / $numOfRecs);
 	
-		$stmt = $pdo->prepare("SELECT * FROM products WHERE category_id=$categoryId ORDER BY id DESC LIMIT $offset,$numOfRecs");
+		$stmt = $pdo->prepare("SELECT * FROM products WHERE category_id=$categoryId AND quantity > 0 ORDER BY id DESC LIMIT $offset,$numOfRecs");
 		$stmt->execute();
 		$result = $stmt->fetchAll();
 	}else {
-		$stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC");
+		$stmt = $pdo->prepare("SELECT * FROM products WHERE quantity > 0 ORDER BY id DESC");
 		$stmt->execute();
 		$products = $stmt->fetchAll();
 		$total_pages = ceil(count($products) / $numOfRecs);
 	
-		$stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC LIMIT $offset,$numOfRecs");
+		$stmt = $pdo->prepare("SELECT * FROM products WHERE quantity > 0 ORDER BY id DESC LIMIT $offset,$numOfRecs");
 		$stmt->execute();
 		$result = $stmt->fetchAll();
 	}
   }else {
     $searchKey = !empty($_POST['search']) ? $_POST['search'] : $_COOKIE['search'] ;
-    $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' AND quantity > 0 ORDER BY id DESC");
     $stmt->execute();
     $products = $stmt->fetchAll();
     $total_pages = ceil(count($products) / $numOfRecs);
 
-    $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numOfRecs");
+    $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' AND quantity > 0 ORDER BY id DESC LIMIT $offset,$numOfRecs");
     $stmt->execute();
     $result = $stmt->fetchAll();
   }
@@ -118,17 +118,23 @@
 									<div class="price">
 										<h6><?php echo escape($value['price']) ?></h6>
 									</div>
+									<form action="addtocart.php" method="POST">
+									<input name="_token" type="hidden" value="<?php echo $_SESSION['_token']; ?>">
+									<input type="hidden" name="id" value="<?php echo escape($value['id']) ?>">
+									<input type="hidden" name="qty" value="1">
 									<div class="prd-bottom">
-
-										<a href="index.php?id=<?php echo($value['id'])?>" class="social-info">
+										<div class="social-info">
+										<button type="submit" style="display: contents">
 											<span class="ti-bag"></span>
-											<p class="hover-text">add to bag</p>
-										</a>
+											<p class="hover-text" style="left: 24px">add to bag</p>
+										</button>
+										</div>
 										<a href="product_detail.php?id=<?php echo($value['id'])?>" class="social-info">
 											<span class="lnr lnr-move"></span>
 											<p class="hover-text">view more</p>
 										</a>
 									</div>
+									</form>
 								</div>
 							</div>
 						</div>
