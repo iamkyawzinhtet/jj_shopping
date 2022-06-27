@@ -3,6 +3,10 @@
 	require 'config/config.php';
 	require 'config/common.php';
 
+	if(empty($_SESSION['user_id']) && empty($_SESSION['logged_in'])) {
+		header('Location: login.php');
+	}
+
 	if(!empty($_SESSION['cart'])) {
 		$userId = $_SESSION['user_id'];
 	$total = 0;
@@ -127,7 +131,7 @@
 				<div class="col-first">
 					<h1>Confirmation</h1>
 					<nav class="d-flex align-items-center">
-						<a href="index.html">Home<span class="lnr lnr-arrow-right"></span></a>
+						<a href="logout.php">Logout<span class="lnr lnr-arrow-right"></span></a>
 					</nav>
 				</div>
 			</div>
