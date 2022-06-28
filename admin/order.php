@@ -29,6 +29,7 @@
   
   // print "<pre>";
   // print_r($result);
+  // exit();
 ?>
 
   <?php include('header.php'); ?>

@@ -42,12 +42,45 @@
       }
 
     }else { //validation success
-      if($_FILES['image']['name']) {
-        $file = 'images/'.($_FILES['image']['name']);
-        $imageType = pathinfo($file,PATHINFO_EXTENSION);
-  
-        if($imageType != 'jpg' && $imageType != 'jpeg' && $imageType != 'png') {
-            echo "<script>alert('Image must be jpg,jpeg or png');</script>";
+
+      if(is_numeric($_POST['quantity']) != 1) {
+        $qtyError = 'Quantity must be Integer';
+      }
+      if(is_numeric($_POST['price']) != 1) {
+        $priceError = 'Price must be Integer';
+      }
+
+      if($qtyError == '' && $priceError == ''){
+        if($_FILES['image']['name']) {
+          $file = 'images/'.($_FILES['image']['name']);
+          $imageType = pathinfo($file,PATHINFO_EXTENSION);
+    
+          if($imageType != 'jpg' && $imageType != 'jpeg' && $imageType != 'png') {
+              echo "<script>alert('Image must be jpg,jpeg or png');</script>";
+          }else {
+              $id = $_POST['id'];
+              $name = $_POST['name'];
+              $desc = $_POST['description'];
+              $category = $_POST['category'];
+              $quantity = $_POST['quantity'];
+              $price = $_POST['price'];
+              $image = $_FILES['image']['name'];
+    
+              move_uploaded_file($_FILES['image']['tmp_name'],$file);
+              
+              $stmt = $pdo->prepare("UPDATE products SET name=:name,description=:descripiton,category_id=:category,quantity=:quantity,price=:price,image=:image WHERE id=$id");
+    
+              $result = $stmt->execute(
+                  array(
+                      ':name'=>$name,':descripiton'=>$desc,':category'=>$category,':quantity'=>$quantity,':price'=>$price,':image'=>$image
+                  )
+              );
+    
+              if($result) {
+                echo "<script>alert('Product is updated');window.location.href=('index.php');</script>";
+              }
+    
+          }
         }else {
             $id = $_POST['id'];
             $name = $_POST['name'];
@@ -55,43 +88,20 @@
             $category = $_POST['category'];
             $quantity = $_POST['quantity'];
             $price = $_POST['price'];
-            $image = $_FILES['image']['name'];
-  
-            move_uploaded_file($_FILES['image']['tmp_name'],$file);
-            
-            $stmt = $pdo->prepare("UPDATE products SET name=:name,description=:descripiton,category_id=:category,quantity=:quantity,price=:price,image=:image WHERE id=$id");
-  
+          
+            $stmt = $pdo->prepare("UPDATE products SET name=:name,description=:descripiton,category_id=:category,quantity=:quantity,price=:price WHERE id=$id");
+    
             $result = $stmt->execute(
                 array(
-                    ':name'=>$name,':descripiton'=>$desc,':category'=>$category,':quantity'=>$quantity,':price'=>$price,':image'=>$image
+                    ':name'=>$name,':descripiton'=>$desc,':category'=>$category,':quantity'=>$quantity,':price'=>$price
                 )
             );
   
             if($result) {
-              echo "<script>alert('Product is updated');window.location.href=('index.php');</script>";
+                echo "<script>alert('Product is updated');window.location.href=('index.php');</script>";
             }
-  
-        }
-      }else {
-          $id = $_POST['id'];
-          $name = $_POST['name'];
-          $desc = $_POST['description'];
-          $category = $_POST['category'];
-          $quantity = $_POST['quantity'];
-          $price = $_POST['price'];
-        
-          $stmt = $pdo->prepare("UPDATE products SET name=:name,description=:descripiton,category_id=:category,quantity=:quantity,price=:price WHERE id=$id");
-  
-          $result = $stmt->execute(
-              array(
-                  ':name'=>$name,':descripiton'=>$desc,':category'=>$category,':quantity'=>$quantity,':price'=>$price
-              )
-          );
-
-          if($result) {
-              echo "<script>alert('Product is updated');window.location.href=('index.php');</script>";
-          }
-       }
+         }
+      } 
     }
       // print "<pre>";
       // print_r($result);

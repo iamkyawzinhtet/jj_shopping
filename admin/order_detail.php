@@ -18,17 +18,18 @@
     $numOfRecs = 5;
     $offset = ($pageno - 1) * $numOfRecs;
 
-    $stmt = $pdo->prepare("SELECT * FROM sale_order_detail WHERE id=".$_GET['id']);
+    $stmt = $pdo->prepare("SELECT * FROM sale_order_detail WHERE sale_order_id=".$_GET['id']);
     $stmt->execute();
     $rawResult = $stmt->fetchAll();
     $total_pages = ceil(count($rawResult) / $numOfRecs);
 
-    $stmt = $pdo->prepare("SELECT * FROM sale_order_detail WHERE id=".$_GET['id']." LIMIT $offset,$numOfRecs");
+    $stmt = $pdo->prepare("SELECT * FROM sale_order_detail WHERE sale_order_id=".$_GET['id']." LIMIT $offset,$numOfRecs");
     $stmt->execute();
     $result = $stmt->fetchAll();
   
-  // print "<pre>";
-  // print_r($result);
+    // print "<pre>";
+    // print_r($rawResult);
+    // exit();
 ?>
 
   <?php include('header.php'); ?>
@@ -75,6 +76,9 @@
                         $productStmt = $pdo->prepare("SELECT * FROM products WHERE id=".$value['product_id']);
                         $productStmt->execute();
                         $productResult = $productStmt->fetchAll();
+                        // print"<pre>";
+                        // print_r($productResult);
+                        // exit();
                     ?>
                         <tr>
                           <td><?php echo $i ?></td>
@@ -94,19 +98,19 @@
               <div class="card-footer clearfix">
                 <ul class="pagination pagination-sm m-0 float-right">
                   <li class="page-item">
-                    <a class="page-link" href="?pageno=1">First</a>
+                    <a class="page-link" href="?id=<?php echo $_GET['id'] ?>&pageno=1">First</a>
                   </li>
                   <li class="page-item <?php if($pageno<=1){echo 'disabled';} ?>">
-                    <a class="page-link" href="<?php if($pageno<=1){echo '#';}else{echo "?pageno=".($pageno-1);} ?>">Previous</a>
+                    <a class="page-link" href="<?php if($pageno<=1){echo '#';}else{echo "?id=".$_GET['id']."&pageno=".($pageno-1);} ?>">Previous</a>
                   </li>
                   <li class="page-item">
                     <a class="page-link" href="#"><?php echo $pageno; ?></a>
                   </li>
                   <li class="page-item <?php if($pageno>=$total_pages){echo 'disabled';} ?>">
-                    <a class="page-link" href="<?php if($pageno>=$total_pages){echo '#';}else{echo "?pageno=".($pageno+1);} ?>">Next</a>
+                    <a class="page-link" href="<?php if($pageno>=$total_pages){echo '#';}else{echo "?id=".$_GET['id']."&pageno=".($pageno+1);} ?>">Next</a>
                   </li>
                   <li class="page-item">
-                    <a class="page-link" href="?pageno=<?php echo $total_pages ?>">Last</a>
+                    <a class="page-link" href="?id=<?php echo $_GET['id'] ?>&pageno=<?php echo $total_pages ?>">Last</a>
                   </li>
                 </ul>
               </div>
